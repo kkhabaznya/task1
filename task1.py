@@ -8,10 +8,10 @@ computer_name = socket.gethostname()
 def command_line():
     print(f"{user_name}@{computer_name}:~$ ",end="")
     user_input = input()
-    parce(user_input)
+    parse(user_input)
     command_line()
 
-def parce(user_input):
+def parse(user_input):
     user_input = re.findall(r'[a-z]+|["][^".]+["]|[^\s]+',user_input)
     match user_input[0]:
         case "ls":
