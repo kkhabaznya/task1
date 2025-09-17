@@ -1,0 +1,9 @@
+cd /..
+ls
+cd "test test" "test" -test --test .test
+not
+a
+command
+
+^emptyline
+exit
