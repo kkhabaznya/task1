@@ -25,6 +25,9 @@ def command_line():
     command_line()
 
 def script_reader(script_path):
+    if (not(os.path.exists(script_path))):
+        print(f"{boot_script_path}@{computer_name}:~$ ","invalid file or file does not exist")
+        return 0
     with open(os.getcwd()+rf"\{script_path}") as commands:
         commands = [line.rstrip() for line in commands]
     for command in commands:
