@@ -1,0 +1,2 @@
+vfs_test all
+exit

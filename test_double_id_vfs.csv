@@ -1,0 +1,11 @@
+﻿root;0;-1;dir;root directory
+directory_1;1;0;dir;
+directory_2;2;0;dir;
+directory_3;3;1;dir;
+directory_4;4;2;dir;
+readme;5;0;txt;
+text_file_1;6;1;txt;
+text_file_2;7;1;txt;
+text_file_3;8;3;txt;
+text_file_4;9;4;txt;
+bad_directory;2;-1;dir;

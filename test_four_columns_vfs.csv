@@ -1,0 +1,17 @@
+﻿root;0;-1;dir
+directory_1;1;0;dir
+directory_2;2;0;dir
+directory_3;3;1;dir
+directory_4;4;2;dir
+readme;5;0;txt
+text_file_1;6;1;txt
+text_file_2;7;1;txt
+text_file_3;8;3;txt
+text_file_4;9;4;txt
+directory_5;10;4;dir
+directory_6;11;4;dir
+directory_7;12;4;dir
+text_file_5;13;4;txt
+text_file_6;14;4;txt
+text_file_7;15;4;txt
+text_file_8;16;4;txt
