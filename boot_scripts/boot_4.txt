@@ -1,0 +1,6 @@
+cd
+ls
+cd directory_1
+ls
+ls directory_3
+exit

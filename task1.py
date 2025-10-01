@@ -4,6 +4,7 @@ import re # regex
 import argparse #arguments
 import os # path
 import csv # vfs
+import datetime # date
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-v','--vfs_path', type=str)
@@ -17,6 +18,9 @@ user_name = getpass.getuser()
 computer_name = socket.gethostname()
 
 data = []
+active_dir = None
+
+boot_up_time = datetime.datetime.now()
 
 script_active = False
 
@@ -55,8 +59,8 @@ def vfs_to_memory(vfs_path):
                 exit_application()
     for item1 in data:
         for item2 in data:
-            if item1["id"]==item2["id"] and item1!=item2:
-                print(f"{vfs_path}@{computer_name}:~$ ",f"bad vfs, two items '{item1["name"]}' and '{item2["name"]}' share same id")
+            if item1["id"]==item2["id"] and item1!=item2 or item1["parent"]==item2["parent"]=="-1" and item1!=item2:
+                print(f"{vfs_path}@{computer_name}:~$ ",f"bad vfs, two items '{item1["name"]}' and '{item2["name"]}' share same id or both are root objects")
                 exit_application()
 
 def file_name(file):
@@ -92,23 +96,109 @@ def parse(user_input):
                 cd(user_input)
             case "exit":
                 exit_application()
+            case "date":
+                date_command()
+            case "uptime":
+                uptime()
+            case "who":
+                who()
             case "vfs_test":
                 print_subordinates(user_input)
             case _:
                 if(not(script_active)):
                     print("invalid command")
 
+def pathfinder(user_input):
+    root_object = active_dir
+    
+    for item in user_input:
+        for item2 in data:
+            if item2["parent"] == root_object and item2["name"] == item:
+                root_object = item2["id"]
+
+    return root_object
+
+def pathmaker(user_input):
+    path = []
+
+    while user_input != "-1":
+        for item in data:
+            if item["id"] == user_input:
+                user_input = item["parent"]
+                path.append(item["name"])
+
+    path_string = ""
+    path = path[::-1]
+    for item in path:
+        path_string += "/"+item
+        
+    return path_string
+
 def ls(user_input):
-    print(user_input)
+    path = active_dir
+    if len(user_input) > 1:
+        path = user_input[1].split("/")
+        for item in path:
+            if item == "":
+                path.remove(item)
+
+    print_subordinates(["vfs_test",pathfinder(path)])
+        
     
 def cd(user_input):
-    print(user_input)
-    
+    global active_dir
+    if (len(user_input) > 1):
+        '''
+        if "/" in user_input[1]:
+            path = user_input[1].split("/")
+            for item in path:
+                if item == "":
+                    path.remove(item)
+            print(path)
+            search_for = pathfinder(path)
+            print(search_for)
+            for item in data:
+                if item["id"] == search_for:
+                    active_dir = item["id"]
+                    return 0
+            print("error invalid path i guess")
+            return 0
+        '''
+        if ".." == user_input[1]:
+            for item in data:
+                if item["id"] == active_dir:
+                    if item["parent"] != "-1":
+                        active_dir = item["parent"]
+                        print(f"cd@{computer_name}:~$ success, returned to previous directory")
+                        return 0
+            print(f"cd@{computer_name}:~$ error, already at root directory")
+            return 0
+        for item in data:
+            if item["parent"] == active_dir and item["name"] == user_input[1] and item["type"] == "dir":
+                active_dir = item["id"]
+                print(f"cd@{computer_name}:~$ success, moved to {item["name"]} directory")
+                return 0
+        print(f"cd@{computer_name}:~$ error, theres no directory with such name")
+    else:
+        print(pathmaker(active_dir))
+
+def date_command():
+    print(f"date@{computer_name}:~$",datetime.datetime.now())
+
+def uptime():
+    print(f"uptime@{computer_name}:~$",datetime.datetime.now()-boot_up_time)
+
+def who():
+    print(f"who@{computer_name}:~$ user:{user_name} computer:{computer_name}")
+
 def exit_application():
     exit()
 
 if(vfs_path != None):
     vfs_to_memory(vfs_path)
+    for item in data:
+        if item["parent"] == "-1":
+            active_dir = item["id"]
 
 if(boot_script_path != None):
     script_active = True
