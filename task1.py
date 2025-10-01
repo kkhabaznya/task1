@@ -135,6 +135,9 @@ def pathmaker(user_input):
     return path_string
 
 def ls(user_input):
+    if active_dir == None:
+        print(f"ls@{computer_name}:~$ error, no vfs installed")
+        return 0
     path = active_dir
     if len(user_input) > 1:
         path = user_input[1].split("/")
@@ -147,6 +150,9 @@ def ls(user_input):
     
 def cd(user_input):
     global active_dir
+    if active_dir == None:
+        print(f"cd@{computer_name}:~$ error, no vfs installed")
+        return 0
     if (len(user_input) > 1):
         '''
         if "/" in user_input[1]:
