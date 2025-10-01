@@ -5,6 +5,7 @@ import argparse #arguments
 import os # path
 import csv # vfs
 import datetime # date
+import base64 # bin files
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-v','--vfs_path', type=str)
@@ -102,6 +103,8 @@ def parse(user_input):
                 uptime()
             case "who":
                 who()
+            case "print_data":
+                print_data(user_input)
             case "vfs_test":
                 print_subordinates(user_input)
             case _:
@@ -196,6 +199,18 @@ def uptime():
 
 def who():
     print(f"who@{computer_name}:~$ user:{user_name} computer:{computer_name}")
+
+def print_data(user_input):
+    for item in data:
+        if item["id"] == user_input[1]:
+            if item["type"] == "bin":
+                decoded_data = base64.b64decode(item["data"]).decode("UTF-8")
+                print(decoded_data)
+                return 0
+            print(item["data"])
+            return 0
+    print(f"print_data@{computer_name}:~$ error, no file was found")
+    return 0
 
 def exit_application():
     exit()
