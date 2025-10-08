@@ -107,6 +107,10 @@ def parse(user_input):
                 print_data(user_input)
             case "vfs_test":
                 print_subordinates(user_input)
+            case "touch":
+                touch(user_input)
+            case "mkdir":
+                mkdir(user_input)
             case _:
                 if(not(script_active)):
                     print("invalid command")
@@ -157,22 +161,26 @@ def cd(user_input):
         print(f"cd@{computer_name}:~$ error, no vfs installed")
         return 0
     if (len(user_input) > 1):
-        '''
         if "/" in user_input[1]:
             path = user_input[1].split("/")
             for item in path:
                 if item == "":
                     path.remove(item)
-            print(path)
-            search_for = pathfinder(path)
-            print(search_for)
-            for item in data:
-                if item["id"] == search_for:
-                    active_dir = item["id"]
-                    return 0
-            print("error invalid path i guess")
+            pathing = 0
+            previous_id = "-1"
+            final_destination = None
+            for item in path:
+                for item2 in data:
+                    if item2["type"] == "dir" and item2["name"] == item and item2["parent"] == previous_id or previous_id == "-1":
+                        pathing += 1
+                        previous_id = item2["id"]
+                        final_destination = item2
+            if pathing == len(path):
+                active_dir = final_destination["id"]
+                print(f"success, moved to {final_destination["name"]} directory")
+                return 0
+            print(f"cd@{computer_name}:~$ error, bad path")
             return 0
-        '''
         if ".." == user_input[1]:
             for item in data:
                 if item["id"] == active_dir:
@@ -212,6 +220,34 @@ def print_data(user_input):
     print(f"print_data@{computer_name}:~$ error, no file was found")
     return 0
 
+def touch(user_input):
+    if len(user_input)<3:
+        print(f"touch@{computer_name}:~$ error, not enough arguments")
+        return 0
+    found = False
+    new_file_id = 0
+    while found == False:
+        for item in data:
+            if item["id"] == str(new_file_id):
+                new_file_id += 1
+        found = True
+    data.append(dict(name = user_input[1], id = str(new_file_id), parent = active_dir, type = user_input[2], data = ""))
+    print(f"touch@{computer_name}:~$ new file, {user_input[1]} has been created")
+
+def mkdir(user_input):
+    if len(user_input)<2:
+        print(f"mkdir@{computer_name}:~$ error, not enough arguments")
+        return 0
+    found = False
+    new_dir_id = 0
+    while found == False:
+        for item in data:
+            if item["id"] == str(new_dir_id):
+                new_dir_id += 1
+        found = True
+    data.append(dict(name = user_input[1], id = str(new_dir_id), parent = active_dir, type = "dir", data = ""))
+    print(f"mkdir@{computer_name}:~$ new dir, {user_input[1]} has been created")
+    
 def exit_application():
     exit()
 

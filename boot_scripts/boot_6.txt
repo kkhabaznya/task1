@@ -1,0 +1,13 @@
+mkdir 1
+ls
+cd 1
+ls
+mkdir 2
+touch 3 txt
+touch 4 bin
+touch 5 aaaaaaaaa
+ls
+mkdir
+touch
+touch 6
+exit
